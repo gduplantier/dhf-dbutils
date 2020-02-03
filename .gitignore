@@ -7,4 +7,3 @@
 *.ipr
 build
 data
-gradle-local.properties
