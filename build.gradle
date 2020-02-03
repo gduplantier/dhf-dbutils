@@ -1,0 +1,67 @@
+buildscript {
+	repositories {
+		jcenter()
+		maven {url 'http://developer.marklogic.com/maven2/'}
+	}
+	dependencies {
+		classpath "gradle.plugin.net.saliman:gradle-properties-plugin:1.5.1"
+	}
+}
+
+plugins {
+	id 'java'
+}
+
+apply plugin: "net.saliman.properties"
+
+repositories {
+	jcenter()
+	mavenCentral()
+	maven {url "https://plugins.gradle.org/m2"}
+}
+
+dependencies {
+	compile "net.saliman:gradle-properties-plugin:1.5.1"
+}
+
+/***********************************************************************************
+ * DHF DB Utils Tasks
+ ***********************************************************************************/
+task createEntityOracle(type: com.marklogic.gradle.task.EntityFromOracle) {
+  description = "Scaffolding task to create an entity descriptor from an Oracle table"
+  entity = project.property("tableName")
+  tableName = project.property("tableName")
+  camelCase = true
+  outputFilename = "${project.projectDir}\\entities\\${project.tableName}.entity.json" //must have entities folder created
+}
+
+task createEntityDB2(type: com.marklogic.gradle.task.EntityFromDB2) {
+  description = "Scaffolding task to create an entity descriptor from a DB2 table"
+  entity = project.property("tableName")
+  tableName = project.property("tableName")
+  outputFilename = "${project.projectDir}\\entities\\${project.tableName}.entity.json"
+}
+
+task createAllEntitiesDB2(type: com.marklogic.gradle.task.AllEntitiesFromDB2) {
+  description = "Scaffolding task to create an entity descriptor from a DB2 table"
+  inputFilename = "${project.projectDir}\\data\\tableList.txt"
+  outputDir = "${project.projectDir}\\entities\\"
+}
+
+task extractHeader(type: com.marklogic.gradle.task.ExtractHeader) {
+  description = "Extract header row of CSV"
+  tableName = project.property("tableName")
+  outputFilepath = "${project.projectDir}\\data\\headerRows\\"
+}
+
+task extractHeaders(type: com.marklogic.gradle.task.ExtractHeaders) {
+  description = "Extract CSV header rows for list of tables"
+  outputFilepath = "${project.projectDir}\\data\\headerRows\\"
+  tableListFile = "${project.projectDir}\\data\\tableList.txt"
+}
+
+task extractTableToCSV(type: com.marklogic.gradle.task.ExtractTableToCSV) {
+  description = "Extract table to CSV"
+  outputFilepath = "${project.projectDir}\\data\\"
+  tableName = project.property("tableName")
+}

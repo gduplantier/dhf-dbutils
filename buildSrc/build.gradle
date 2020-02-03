@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE"
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    mavenLocal()
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+configurations { driver }
+
+dependencies {
+    implementation gradleApi()
+
+    //Download from IBM's website
+    driver files('libs/db2jcc4.jar')
+
+    //Download from Oracle's website
+    driver files('libs/ojdbc8.jar')
+
+    compile "junit:junit:4.12"
+}
+
+//Load the JDBC driver classes
+URLClassLoader loader = GroovyObject.class.classLoader
+configurations.driver.each { File file ->
+    loader.addURL(file.toURL())
+}
+
